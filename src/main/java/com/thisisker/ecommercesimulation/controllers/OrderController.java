@@ -55,4 +55,14 @@ public class OrderController {
     public Page<Order> getOrders(@RequestParam int page, @RequestParam int size) {
         return orderService.getAllOrders(page, size);
     }
+
+    @PatchMapping("/{orderId}/status")
+    public Order updateOrderStatus(@PathVariable Long orderId, @RequestBody Order.OrderStatus status) {
+        return orderService.updateOrderStatus(orderId, status);
+    }
+
+    @GetMapping("/{orderId}/status")
+    public Order.OrderStatus getOrderStatus(@PathVariable Long orderId) {
+        return orderService.getOrderStatus(orderId);
+    }
 }

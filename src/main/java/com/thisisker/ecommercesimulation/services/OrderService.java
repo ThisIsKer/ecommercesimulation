@@ -90,14 +90,28 @@ public class OrderService {
 
     @Transactional
     public void deleteOrder(Long id) {
-        if (!orderRepository.existsById(id)) {
-            throw new RuntimeException("Order not found");
+        Order order = orderRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        if (order.getStatus() == Order.OrderStatus.DELIVERED) {
+            throw new IllegalStateException("Cannot delete an order with status 'DELIVERED'");
         }
-        orderRepository.deleteById(id);
+
+        orderRepository.delete(order);
     }
 
     public Page<Order> getAllOrders(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return orderRepository.findAll(pageable);
+    }
+
+    public Order updateOrderStatus(Long orderId, Order.OrderStatus status) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        order.setStatus(status);
+        return orderRepository.save(order);
+    }
+
+    public Order.OrderStatus getOrderStatus(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        return order.getStatus();
     }
 }
