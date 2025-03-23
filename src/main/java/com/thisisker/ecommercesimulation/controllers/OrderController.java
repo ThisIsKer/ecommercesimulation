@@ -3,6 +3,7 @@ package com.thisisker.ecommercesimulation.controllers;
 import com.thisisker.ecommercesimulation.entities.Order;
 import com.thisisker.ecommercesimulation.entities.OrderItem;
 import com.thisisker.ecommercesimulation.services.OrderService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,5 +49,10 @@ public class OrderController {
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/orders")
+    public Page<Order> getOrders(@RequestParam int page, @RequestParam int size) {
+        return orderService.getAllOrders(page, size);
     }
 }
