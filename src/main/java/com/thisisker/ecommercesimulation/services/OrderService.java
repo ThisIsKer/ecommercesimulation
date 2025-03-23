@@ -31,7 +31,6 @@ public class OrderService {
 
         Order order = new Order();
         order.setCustomer(customer);
-        order.setProducts(products);
 
         return orderRepository.save(order);
     }
