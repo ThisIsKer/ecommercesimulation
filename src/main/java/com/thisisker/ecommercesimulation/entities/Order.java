@@ -21,7 +21,6 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
-    // Constructors, getters, and setters
     public Order() {}
 
     public Order(Customer customer, List<OrderItem> orderItems) {

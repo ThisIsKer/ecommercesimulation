@@ -8,6 +8,7 @@ import com.thisisker.ecommercesimulation.repositories.OrderRepository;
 import com.thisisker.ecommercesimulation.repositories.OrderItemRepository;
 import com.thisisker.ecommercesimulation.repositories.ProductRepository;
 import com.thisisker.ecommercesimulation.repositories.CustomerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,18 +19,12 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
-    private final ProductRepository productRepository;
-    private final CustomerRepository customerRepository;
-
-    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
-                        ProductRepository productRepository, CustomerRepository customerRepository) {
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-        this.productRepository = productRepository;
-        this.customerRepository = customerRepository;
-    }
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Transactional
     public Order createOrder(Long customerId, List<OrderItem> orderItems) {
@@ -39,7 +34,6 @@ public class OrderService {
         Order order = new Order();
         order.setCustomer(customer);
 
-        // Validate and attach products to order items
         List<OrderItem> validOrderItems = orderItems.stream().map(orderItem -> {
             Product product = productRepository.findById(orderItem.getProduct().getId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -65,10 +59,8 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        // Remove old order items
         order.getOrderItems().clear();
 
-        // Add updated order items
         List<OrderItem> newOrderItems = updatedOrderItems.stream().map(orderItem -> {
             Product product = productRepository.findById(orderItem.getProduct().getId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
